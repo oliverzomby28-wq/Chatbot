@@ -10,9 +10,31 @@
 
 <body class="bg-zinc-950 text-white min-h-screen flex items-center justify-center">
 
-    <div class="w-full max-w-2xl h-[700px] bg-zinc-900 rounded-2xl border border-zinc-800 flex flex-col overflow-hidden">
+    <div class="relative w-full max-w-5xl h-[700px] bg-zinc-900 rounded-2xl border border-zinc-800 flex overflow-hidden">
 
-        <header class="p-5 border-b border-zinc-800">
+        <aside id="sidebar" class="absolute md:static inset-y-0 left-0 z-20 w-64 shrink-0 bg-zinc-950 border-r border-zinc-800 flex flex-col -translate-x-full md:translate-x-0 transition-transform">
+
+            <div class="p-4 border-b border-zinc-800">
+                <button
+                    id="nuevo-chat"
+                    class="w-full bg-zinc-800 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-zinc-700 transition"
+                >
+                    + Nuevo chat
+                </button>
+            </div>
+
+            <p class="px-4 pt-4 pb-2 text-xs uppercase tracking-wide text-zinc-500">Historial</p>
+
+            <nav id="lista-chats" class="flex-1 px-2 pb-4 space-y-1 overflow-y-auto"></nav>
+
+        </aside>
+
+        <div id="overlay" class="hidden absolute inset-0 z-10 bg-black/50 md:hidden"></div>
+
+        <section class="flex-1 min-w-0 flex flex-col">
+
+        <header class="p-5 border-b border-zinc-800 flex items-center gap-3">
+            <button id="abrir-sidebar" class="md:hidden text-zinc-400 hover:text-white text-xl leading-none">☰</button>
             <h1 class="text-lg font-semibold">🤖 Mi Chatbot</h1>
         </header>
 
@@ -48,7 +70,11 @@
 
         </div>
 
+        </section>
+
     </div>
+
+    <script src="app.js"></script>
 
 </body>
 </html>
