@@ -119,13 +119,26 @@ function eliminarChat(id) {
     renderMensajes();
 }
 
-function responder(texto) {
-    return `Recibí tu mensaje: "${texto}"`;
+let esperando = false;
+
+async function responder(mensajes) {
+    try {
+        const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mensajes }),
+        });
+        const datos = await res.json().catch(() => ({}));
+        if (!res.ok) return `⚠️ ${datos.error || "Error del servidor (" + res.status + ")"}`;
+        return datos.respuesta;
+    } catch {
+        return "⚠️ No se pudo conectar con el servidor. ¿Está corriendo app.py?";
+    }
 }
 
-function enviar() {
+async function enviar() {
     const texto = mensajeEl.value.trim();
-    if (!texto) return;
+    if (!texto || esperando) return;
 
     let chat = chatActivo();
     if (!chat) {
@@ -140,13 +153,30 @@ function enviar() {
     }
 
     chat.mensajes.push({ rol: "user", texto });
-    chat.mensajes.push({ rol: "bot", texto: responder(texto) });
     chat.actualizado = Date.now();
-
     guardarChats();
     mensajeEl.value = "";
     renderLista();
     renderMensajes();
+
+    esperando = true;
+    enviarEl.disabled = true;
+    enviarEl.classList.add("opacity-50");
+    const escribiendo = crearBurbuja("bot", "Escribiendo…");
+    escribiendo.classList.add("animate-pulse");
+    chatEl.appendChild(escribiendo);
+    chatEl.scrollTop = chatEl.scrollHeight;
+
+    const respuesta = await responder(chat.mensajes);
+
+    chat.mensajes.push({ rol: "bot", texto: respuesta });
+    chat.actualizado = Date.now();
+    guardarChats();
+    esperando = false;
+    enviarEl.disabled = false;
+    enviarEl.classList.remove("opacity-50");
+    renderLista();
+    if (chatActivoId === chat.id) renderMensajes();
 }
 
 function abrirSidebar() {
