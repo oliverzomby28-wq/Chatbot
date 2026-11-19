@@ -10,13 +10,14 @@
 
 <body class="bg-zinc-950 text-white min-h-screen flex items-center justify-center">
 
-    <div class="relative w-full max-w-5xl h-[700px] bg-zinc-900 rounded-2xl border border-zinc-800 flex overflow-hidden">
+    <div class="relative w-full max-w-5xl h-dvh md:h-[700px] bg-zinc-900 md:rounded-2xl md:border border-zinc-800 flex overflow-hidden">
 
         <aside id="sidebar" class="absolute md:static inset-y-0 left-0 z-20 w-64 shrink-0 bg-zinc-950 border-r border-zinc-800 flex flex-col -translate-x-full md:translate-x-0 transition-transform">
 
             <div class="p-4 border-b border-zinc-800">
                 <button
                     id="nuevo-chat"
+                    type="button"
                     class="w-full bg-zinc-800 border border-zinc-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-zinc-700 transition"
                 >
                     + Nuevo chat
@@ -34,11 +35,11 @@
         <section class="flex-1 min-w-0 flex flex-col">
 
         <header class="p-5 border-b border-zinc-800 flex items-center gap-3">
-            <button id="abrir-sidebar" class="md:hidden text-zinc-400 hover:text-white text-xl leading-none">☰</button>
+            <button id="abrir-sidebar" type="button" aria-label="Abrir historial" aria-controls="sidebar" aria-expanded="false" class="md:hidden text-zinc-400 hover:text-white text-xl leading-none">☰</button>
             <h1 class="text-lg font-semibold">🤖 Mi Chatbot</h1>
         </header>
 
-        <main id="chat" class="flex-1 p-6 space-y-4 overflow-y-auto">
+        <main id="chat" role="log" aria-live="polite" class="flex-1 p-4 md:p-6 space-y-4 overflow-y-auto">
 
             <div class="flex">
                 <div class="bg-zinc-800 px-4 py-3 rounded-2xl rounded-tl-sm">
@@ -55,15 +56,17 @@
                 <textarea
                     id="mensaje"
                     rows="1"
+                    aria-label="Mensaje"
                     placeholder="Escribe un mensaje..."
-                    class="flex-1 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 resize-none outline-none focus:border-zinc-500"
+                    class="flex-1 max-h-40 bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 resize-none outline-none focus:border-zinc-500"
                 ></textarea>
 
                 <button
                     id="enviar"
-                    class="bg-white text-black px-5 rounded-xl font-semibold hover:bg-zinc-200 transition"
+                    type="button"
+                    class="self-end h-12 bg-white text-black px-5 rounded-xl font-semibold hover:bg-zinc-200 transition disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white"
                 >
-            
+                    Enviar
                 </button>
 
             </div>
