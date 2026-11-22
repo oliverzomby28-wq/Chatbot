@@ -214,8 +214,7 @@ async function enviar() {
 
     try {
         const { ok, texto: respuesta } = await responder(historialParaEnviar(chat));
-        // Buscar por id: otra pestaña pudo recargar `chats` mientras esperábamos.
-        // Si el chat se borró, no lo resucitamos.
+        
         const destino = chats.find((c) => c.id === chat.id);
         if (destino) {
             destino.mensajes.push({ rol: "bot", texto: respuesta, ...(ok ? {} : { error: true }) });
