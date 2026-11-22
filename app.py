@@ -99,7 +99,7 @@ def chat():
         )
     except ConfigError as e:
         return jsonify(error=str(e)), 500
-    except errors.APIError as e:  # clave inválida, cuota, modelo inexistente...
+    except errors.APIError as e:  
         app.logger.exception("Gemini devolvió un error")
         if e.code == 429:
             return jsonify(error="Se alcanzó el límite de uso de Gemini. Espera un momento e inténtalo de nuevo."), 429
