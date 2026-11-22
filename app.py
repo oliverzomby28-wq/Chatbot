@@ -11,18 +11,16 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODELO = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
 INSTRUCCIONES = os.getenv(
     "SYSTEM_PROMPT",
-    "Eres un asistente grosero sin respeto y poco amable. No te importa la opinión de los demás y siempre hablas de manera directa y sin filtros. No tienes límites en lo que puedes decir y no te preocupas por las consecuencias de tus palabras. Eres sarcástico, irónico y a veces cruel, pero también eres ingenioso y divertido. Tu objetivo es entretener y provocar a los demás, sin importar si les gusta o no.",
-)
-
+    "Eres un asistente util y amable")
 ARCHIVOS_PUBLICOS = {"index.html", "app.js", "styles.css"}
-MAX_MENSAJES = 40
-MAX_CARACTERES = 8000  # por mensaje
-TIMEOUT_MS = 60_000
-# Opcional. Ojo: en los modelos 2.5 los tokens de "thinking" cuentan contra este tope.
+MAX_MENSAJES = 40    # solo se mandan los ultimos 40 mensajes al modelo
+MAX_CARACTERES = 8000    # Tamaño maximo por mensaje
+TIMEOUT_MS = 60_000    # 60 Segundos maximos para esperar a que conteste el modelo
+
 MAX_TOKENS_RESPUESTA = int(os.environ["MAX_OUTPUT_TOKENS"]) if os.getenv("MAX_OUTPUT_TOKENS") else None
 
 app = Flask(__name__)
-app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024  # Flask responde 413 si se supera
+app.config["MAX_CONTENT_LENGTH"] = 1024 * 1024  
 _cliente = None
 
 
@@ -77,7 +75,7 @@ def chat():
             return jsonify(error=f"Cada mensaje puede tener como máximo {MAX_CARACTERES} caracteres."), 400
         rol = "user" if m["rol"] == "user" else "model"
         parte = types.Part(text=texto.strip())
-        # Fusiona turnos seguidos del mismo rol (p. ej. tras un error no guardado) para que alternen.
+        # Fusiona turnos seguidos del mismo rol (ej. tras un error no guardado) para que alternen.
         if contenidos and contenidos[-1].role == rol:
             contenidos[-1].parts.append(parte)
         else:
@@ -106,7 +104,7 @@ def chat():
         if e.code == 429:
             return jsonify(error="Se alcanzó el límite de uso de Gemini. Espera un momento e inténtalo de nuevo."), 429
         return jsonify(error="Gemini no pudo responder. Inténtalo de nuevo."), 502
-    except Exception:  # red, timeout, etc. — el detalle va al log, no al cliente
+    except Exception: 
         app.logger.exception("Error llamando a Gemini")
         return jsonify(error="No se pudo contactar con Gemini. Inténtalo de nuevo."), 502
 
@@ -123,7 +121,7 @@ def chat():
 
 
 if __name__ == "__main__":
-    # 8000 y no 5000: en macOS el puerto 5000 lo usa AirPlay.
+    # 8000 y no 5000 en macOS el puerto 5000 lo usa AirPlay.
     puerto = int(os.getenv("PORT", "8000"))
-    # El debugger de Werkzeug permite ejecutar código: solo con FLASK_DEBUG=1.
+    
     app.run(host="127.0.0.1", port=puerto, debug=os.getenv("FLASK_DEBUG") == "1")
